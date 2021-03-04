@@ -3,26 +3,29 @@ package com.SeeWeDemo.webSocketChatService.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class ChatMessage {
 	
-   @Id
-   private String id;
+   @Id 
+   @GeneratedValue(strategy=GenerationType.IDENTITY)
+   private Integer id;
    private String chatId;
-   private String senderId;
-   private String recipientId;
+   private Integer senderId;
+   private Integer recipientId;
    private String senderName;
    private String recipientName;
    private String content;
    private Date timestamp;
    private MessageStatus status;
    
-public String getId() {
+public Integer getId() {
 	return id;
 }
-public void setId(String id) {
+public void setId(Integer id) {
 	this.id = id;
 }
 public String getChatId() {
@@ -31,16 +34,16 @@ public String getChatId() {
 public void setChatId(String chatId) {
 	this.chatId = chatId;
 }
-public String getSenderId() {
+public Integer getSenderId() {
 	return senderId;
 }
-public void setSenderId(String senderId) {
+public void setSenderId(Integer senderId) {
 	this.senderId = senderId;
 }
-public String getRecipientId() {
+public Integer getRecipientId() {
 	return recipientId;
 }
-public void setRecipientId(String recipientId) {
+public void setRecipientId(Integer recipientId) {
 	this.recipientId = recipientId;
 }
 public String getSenderName() {

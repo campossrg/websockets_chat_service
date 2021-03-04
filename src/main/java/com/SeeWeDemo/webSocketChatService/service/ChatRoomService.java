@@ -14,10 +14,8 @@ public class ChatRoomService {
     @Autowired private ChatRoomRepository chatRoomRepository;
 
     public Optional<String> getChatId(
-            String senderId, String recipientId, boolean createIfNotExist) {
+    		Integer senderId, Integer recipientId, boolean createIfNotExist) {
 
-    	return null;
-/*
          return chatRoomRepository
                 .findBySenderIdAndRecipientId(senderId, recipientId)
                 .map(ChatRoom::getChatId)
@@ -25,27 +23,16 @@ public class ChatRoomService {
                     if(!createIfNotExist) {
                         return  Optional.empty();
                     }
-                     var chatId =
+                    String chatId =
                             String.format("%s_%s", senderId, recipientId);
 
-                    ChatRoom senderRecipient = ChatRoom
-                            .builder()
-                            .chatId(chatId)
-                            .senderId(senderId)
-                            .recipientId(recipientId)
-                            .build();
-
-                    ChatRoom recipientSender = ChatRoom
-                            .builder()
-                            .chatId(chatId)
-                            .senderId(recipientId)
-                            .recipientId(senderId)
-                            .build();
+                    ChatRoom senderRecipient = new ChatRoom(chatId, recipientId, senderId);
+                    ChatRoom recipientSender = new ChatRoom(chatId, senderId, recipientId);
+                            
                     chatRoomRepository.save(senderRecipient);
                     chatRoomRepository.save(recipientSender);
 
                     return Optional.of(chatId);
-                });
-*/                
+                });               
     }
 }

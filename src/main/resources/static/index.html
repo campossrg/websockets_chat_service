@@ -8,6 +8,7 @@
 	    <script type="text/javascript">
 
 	        var stompClient = null;
+	        var MainUserId;
 
 	        function setConnected(connected) {
 
@@ -15,18 +16,20 @@
 	            document.getElementById('disconnect').disabled = !connected;
 	            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
 	            document.getElementById('response').innerHTML = '';
+
+	            MainUserId = ((document.getElementById('from').value == 'SCR') ? true : false);
 	        }
 
 	        function connect() {
 
-	            var socket = new SockJS('/chat');
+	            var socket = new SockJS('/ws');
 	            stompClient = Stomp.over(socket);
 
 	            stompClient.connect({}, function(frame) {
 
 	            	setConnected(true);
 	                console.log('Connected: ' + frame);
-	                stompClient.subscribe('/topic/messages', function(messageOutput) {
+	                stompClient.subscribe("/user/" + ((MainUserId) ? 0 : 1) + "/queue/messages", function(messageOutput) {
 
 	                    showMessageOutput(JSON.parse(messageOutput.body));
 	                });
@@ -44,10 +47,19 @@
 	        }
 
 	        function sendMessage() {
-
-	        	var from = document.getElementById('from').value;
 	            var text = document.getElementById('text').value;
-	            stompClient.send("/app/chat", {}, JSON.stringify({'from':from, 'text':text}));
+	            	            
+	            if (text.trim() !== "") {
+	                const message = {
+	                  senderId: ((MainUserId) ? 0 : 1),
+	                  recipientId: ((!MainUserId) ? 0 : 1),
+	                  senderName: ((MainUserId) ? 'SCR' : 'Random'),
+	                  recipientName: ((!MainUserId) ? 'SCR' : 'Random'),
+	                  content: text,
+	                  timestamp: new Date(),
+	                };
+	                stompClient.send("/app/chat", {}, JSON.stringify(message));
+	            }
 	        }
 
 	        function showMessageOutput(messageOutput) {
@@ -55,8 +67,17 @@
 	            var response = document.getElementById('response');
 	            var p = document.createElement('p');
 	            p.style.wordWrap = 'break-word';
-	            p.appendChild(document.createTextNode(messageOutput.from + ": " + messageOutput.text + " (" + messageOutput.time + ")"));
+	            p.appendChild(document.createTextNode("ID " + messageOutput.id + ": SenderName " + messageOutput.senderName));
+	            p.appendChild(document.createTextNode(httpGet('/messages/' + messageOutput.senderId + '/' + ((MainUserId) ? 0 : 1))));
 	            response.appendChild(p);
+	        }
+	        
+	        function httpGet(theUrl)
+	        {
+	            var xmlHttp = new XMLHttpRequest();
+	            xmlHttp.open( "GET", theUrl, true ); // false for synchronous request
+	            xmlHttp.send( null );
+	            return xmlHttp.responseText;
 	        }
 
 	    </script>

@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import com.SeeWeDemo.webSocketChatService.model.ChatRoom;
 
 public interface ChatRoomRepository extends CrudRepository<ChatRoom, String> {
-    Optional<ChatRoom> findBySenderIdAndRecipientId(String senderId, String recipientId);
+    Optional<ChatRoom> findBySenderIdAndRecipientId(Integer senderId, Integer recipientId);
 }
