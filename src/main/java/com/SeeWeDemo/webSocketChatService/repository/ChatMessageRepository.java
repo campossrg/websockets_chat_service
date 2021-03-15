@@ -11,7 +11,7 @@ import com.SeeWeDemo.webSocketChatService.model.ChatMessage;
 import com.SeeWeDemo.webSocketChatService.model.MessageStatus;
 
 public interface ChatMessageRepository
-        extends CrudRepository<ChatMessage, String> {
+        extends CrudRepository<ChatMessage, Integer> {
 
     long countBySenderIdAndRecipientIdAndStatus(
             String senderId, String recipientId, MessageStatus status);
@@ -21,7 +21,7 @@ public interface ChatMessageRepository
     @Modifying
     @Query("update ChatMessage cm set cm.status = :status "
     		+ "where cm.senderId = :senderId "
-    		+ "and cm.recipientId = :recipientId")
+    		+ "and cm.recipientId = :recipientId") 
     int updateMessageSetStatus(@Param("status") MessageStatus status,
     								@Param("senderId") Integer senderId,
     								@Param("recipientId") Integer recipientId);

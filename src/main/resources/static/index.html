@@ -23,6 +23,7 @@
 	        function connect() {
 
 	            var socket = new SockJS('/ws');
+	            var client = new HttpClient();
 	            stompClient = Stomp.over(socket);
 
 	            stompClient.connect({}, function(frame) {
@@ -30,8 +31,18 @@
 	            	setConnected(true);
 	                console.log('Connected: ' + frame);
 	                stompClient.subscribe("/user/" + ((MainUserId) ? 0 : 1) + "/queue/messages", function(messageOutput) {
-
-	                    showMessageOutput(JSON.parse(messageOutput.body));
+	                	var map = JSON.parse(messageOutput.body);
+	                    client.get('/messages/' + map.id, function(response) {
+	                    	showMessageOutput(JSON.parse( response ));
+		                });
+	                });
+	                client.get('/messages/' + ((!MainUserId) ? 0 : 1) + '/' + ((MainUserId) ? 0 : 1), function(JSON.parse(response)) {
+	                	for (var key in response) {
+	                		if (response.hasOwnProperty(key)){
+	                			showMessageOutput(response[key]);
+	                	    }
+	                	}
+                    	showMessageOutput(JSON.parse( response ));
 	                });
 	            });
 	        }
@@ -66,18 +77,25 @@
 
 	            var response = document.getElementById('response');
 	            var p = document.createElement('p');
+	            var linebreak = document.createElement("br");
 	            p.style.wordWrap = 'break-word';
-	            p.appendChild(document.createTextNode("ID " + messageOutput.id + ": SenderName " + messageOutput.senderName));
-	            p.appendChild(document.createTextNode(httpGet('/messages/' + messageOutput.senderId + '/' + ((MainUserId) ? 0 : 1))));
+	            
+	            p.appendChild(document.createTextNode(messageOutput.senderName + ': ' + messageOutput.content));
+    			p.appendChild(linebreak);	            
 	            response.appendChild(p);
 	        }
 	        
-	        function httpGet(theUrl)
-	        {
-	            var xmlHttp = new XMLHttpRequest();
-	            xmlHttp.open( "GET", theUrl, true ); // false for synchronous request
-	            xmlHttp.send( null );
-	            return xmlHttp.responseText;
+	        var HttpClient = function() {
+	            this.get = function(aUrl, aCallback) {
+	                var anHttpRequest = new XMLHttpRequest();
+	                anHttpRequest.onreadystatechange = function() { 
+	                    if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+	                        aCallback(anHttpRequest.responseText);
+	                }
+
+	                anHttpRequest.open( "GET", aUrl, true );            
+	                anHttpRequest.send( null );
+	            }
 	        }
 
 	    </script>

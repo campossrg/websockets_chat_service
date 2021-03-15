@@ -2,15 +2,18 @@ package com.SeeWeDemo.webSocketChatService.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -21,6 +24,8 @@ import com.SeeWeDemo.webSocketChatService.model.MessageStatus;
 import com.SeeWeDemo.webSocketChatService.model.OutputMessage;
 import com.SeeWeDemo.webSocketChatService.service.ChatMessageService;
 import com.SeeWeDemo.webSocketChatService.service.ChatRoomService;
+
+import antlr.collections.List;
 
 @Controller
 public class ChatController {
@@ -93,12 +98,11 @@ public class ChatController {
     @GetMapping("/messages/{senderId}/{recipientId}")
     public ResponseEntity<?> findChatMessages ( @PathVariable Integer senderId,
                                                 @PathVariable Integer recipientId) {
-        return ResponseEntity
-                .ok(chatMessageService.findChatMessages(senderId, recipientId));
+    	return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));  	
     }
 
     @GetMapping("/messages/{id}")
-    public ResponseEntity<?> findMessage ( @PathVariable String id) {
+    public ResponseEntity<?> findMessage ( @PathVariable Integer id) {
         return ResponseEntity
                 .ok(chatMessageService.findById(id));
     }

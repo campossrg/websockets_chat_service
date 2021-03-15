@@ -1,13 +1,10 @@
 package com.SeeWeDemo.webSocketChatService.service;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 
-import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +47,7 @@ public class ChatMessageService {
         return messages;
     }
 
-    public ChatMessage findById(String id) {
+    public ChatMessage findById(Integer id) {
         return repository
                 .findById(id)
                 .map(chatMessage -> {
